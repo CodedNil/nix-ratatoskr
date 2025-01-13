@@ -75,13 +75,25 @@
           "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE2ESM/aoReVuiRZxKg+EAbG4vhPe/XmIlRuO5sJE4TZ root@DESKTOP-95MHB2J"
         ];
       };
-      root = {
-        openssh.authorizedKeys.keys = [
-          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE2ESM/aoReVuiRZxKg+EAbG4vhPe/XmIlRuO5sJE4TZ root@DESKTOP-95MHB2J"
-          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHLyA2WXQ81PQgfxRPZWQcbqKC2MjUuFdYCo9TYgVm4k dan@dan-nixos"
+      media = {
+        isNormalUser = true;
+        extraGroups = [
+          "networkmanager"
+          "wheel"
         ];
+        shell = pkgs.fish;
       };
     };
+  };
+
+  # Enable Nginx
+  services.nginx = {
+    enable = true;
+    recommendedProxySettings = true;
+  };
+  security.acme = {
+    acceptTerms = true;
+    defaults.email = "ratatoskrserver@proton.me";
   };
 
   # List packages installed in system profile. To search, run: $ nix search wget
