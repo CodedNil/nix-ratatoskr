@@ -5,6 +5,13 @@
 
 {
   home-manager.users.dan = {
+    # Enable git
+    programs.git = {
+      enable = true;
+      userName = "Dan Lock";
+      userEmail = "codenil@proton.me";
+    };
+
     # Fish and compatible programs
     programs.fish = {
       enable = true;
@@ -30,27 +37,8 @@
       enable = true;
       enableFishIntegration = true;
     };
+
+    # The state version is required and should stay at the version you originally installed.
+    home.stateVersion = "24.11";
   };
-
-  programs.fish.enable = true;
-  environment.systemPackages = with pkgs; [
-    nerd-fonts.fira-code
-    font-awesome
-    noto-fonts-emoji
-
-    nixfmt-rfc-style
-    just
-    bottom
-    fend
-    tokei
-    wl-clipboard
-
-    cryfs
-    sshfs
-
-    yazi
-    eza
-    bat
-    fd
-  ];
 }

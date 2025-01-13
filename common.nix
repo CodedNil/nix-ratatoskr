@@ -46,46 +46,63 @@
     "flakes"
   ];
 
-  # Enable polkit agent
-  security.soteria.enable = true;
+  # Enable OpenSSH daemon
+  services.openssh.enable = true;
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.dan = {
-    isNormalUser = true;
-    extraGroups = [
-      "networkmanager"
-      "wheel"
-    ];
-    shell = pkgs.fish;
-  };
-  users.users.media = {
-    isNormalUser = true;
-    extraGroups = [
-      "networkmanager"
-      "wheel"
-    ];
-    shell = pkgs.fish;
-  };
-
-  # Home manager
-  home-manager.users.dan = {
-    # Enable git
-    programs.git = {
-      enable = true;
-      userName = "Dan Lock";
-      userEmail = "codenil@proton.me";
+  # Define users. Don't forget to set a password with ‘passwd’.
+  users = {
+    defaultUserShell = pkgs.fish;
+    users = {
+      dan = {
+        isNormalUser = true;
+        extraGroups = [
+          "networkmanager"
+          "wheel"
+        ];
+        createHome = true;
+        openssh.authorizedKeys.keys = [
+          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHLyA2WXQ81PQgfxRPZWQcbqKC2MjUuFdYCo9TYgVm4k dan@dan-arch"
+        ];
+      };
+      max = {
+        isNormalUser = true;
+        extraGroups = [
+          "networkmanager"
+          "wheel"
+        ];
+        createHome = true;
+        openssh.authorizedKeys.keys = [
+          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE2ESM/aoReVuiRZxKg+EAbG4vhPe/XmIlRuO5sJE4TZ root@DESKTOP-95MHB2J"
+        ];
+      };
+      root = {
+        openssh.authorizedKeys.keys = [
+          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE2ESM/aoReVuiRZxKg+EAbG4vhPe/XmIlRuO5sJE4TZ root@DESKTOP-95MHB2J"
+          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHLyA2WXQ81PQgfxRPZWQcbqKC2MjUuFdYCo9TYgVm4k dan@dan-nixos"
+        ];
+      };
     };
-
-    # The state version is required and should stay at the version you originally installed.
-    home.stateVersion = "24.11";
   };
 
   # List packages installed in system profile. To search, run: $ nix search wget
   environment.systemPackages = with pkgs; [
+    nerd-fonts.fira-code
+    font-awesome
+    noto-fonts-emoji
+
+    nixfmt-rfc-style
     rustup
+    just
+    bottom
+    tokei
+
     diskonaut
-    baobab
+    yazi
+    eza
+    bat
+    fd
   ];
+  programs.fish.enable = true;
 
   # This value determines the NixOS release from which the default settings for stateful data, like file locations and database versions on your system were taken.
   system.stateVersion = "24.11";
