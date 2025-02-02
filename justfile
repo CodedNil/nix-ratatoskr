@@ -1,4 +1,7 @@
 default:
+  nh os switch . --update
+
+switch:
   sudo nixos-rebuild switch --flake '.#'
 
 update:

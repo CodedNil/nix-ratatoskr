@@ -11,10 +11,6 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = "ratatoskr"; # Define your hostname.
-  services.xserver.xkb = {
-    layout = "gb";
-    variant = "";
-  };
 
   networking.networkmanager.enable = true; # Enable networking
   time.timeZone = "Europe/London"; # Set your time zone.
@@ -47,7 +43,6 @@
   ];
 
   # Enable OpenSSH daemon
-  services.openssh.enable = true;
   services.openssh = {
     enable = true;
     ports = [ 22 ];
@@ -73,7 +68,7 @@
         ];
         createHome = true;
         openssh.authorizedKeys.keys = [
-          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHLyA2WXQ81PQgfxRPZWQcbqKC2MjUuFdYCo9TYgVm4k dan@dan-arch"
+          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHLyA2WXQ81PQgfxRPZWQcbqKC2MjUuFdYCo9TYgVm4k dan"
         ];
       };
       max = {
@@ -109,23 +104,29 @@
 
   # List packages installed in system profile. To search, run: $ nix search wget
   environment.systemPackages = with pkgs; [
-    nerd-fonts.fira-code
-    font-awesome
-    noto-fonts-emoji
+    # Rust
+    cargo # RUST Package manager
+    rustc # RUST The rust compiler
+    clippy # RUST Linter for rust
+    gcc # C++ Code linker
+    trunk # RUST To compile WASM apps
 
-    nixfmt-rfc-style
-    rustup
-    just
-    bottom
-    tokei
+    # Development Tools
+    nh # RUST Reimplements nix rebuild with visualised upgrade diff
+    jq # C Command line JSON processor
+    just # RUST Command runner
+    bottom # RUST Terminal process monitor
+    tokei # RUST Code statistics tool
 
-    diskonaut
-    yazi
-    eza
-    bat
-    fd
+    # Shell Enhancements
+    eza # RUST Modern 'ls' replacement
+    yazi # RUST Terminal file manager
+    bat # RUST 'cat' clone with syntax highlighting
+    fd # RUST Simple, fast 'find' alternative
   ];
   programs.fish.enable = true;
+  programs.nix-ld.enable = true;
+  programs.nix-ld.libraries = [ ];
 
   # This value determines the NixOS release from which the default settings for stateful data, like file locations and database versions on your system were taken.
   system.stateVersion = "24.11";

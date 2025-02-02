@@ -15,9 +15,7 @@
     # Fish and compatible programs
     programs.fish = {
       enable = true;
-      interactiveShellInit = ''
-        set fish_greeting # Disable greeting
-      '';
+      interactiveShellInit = "set fish_greeting";
       shellAliases = {
         cd = "z";
         cat = "bat";

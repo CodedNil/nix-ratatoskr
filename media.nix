@@ -4,41 +4,41 @@
 }:
 
 {
-  # Sonarr
-  services.sonarr = {
-    enable = true;
-    dataDir = /home/media/.config/sonarr;
-    user = "media";
-    group = "media";
-  }
-  services.nginx.virtualHosts."sonarr.ratatoskr.uk" = {
-      addSSL = true;
-      enableACME = true;
-      locations."/" = {
-        proxyPass = "http://localhost:8989";
-      };
-  };
+  # # Sonarr
+  # services.sonarr = {
+  #   enable = true;
+  #   dataDir = /home/media/.config/sonarr;
+  #   user = "media";
+  #   group = "media";
+  # }
+  # services.nginx.virtualHosts."sonarr.ratatoskr.uk" = {
+  #     addSSL = true;
+  #     enableACME = true;
+  #     locations."/" = {
+  #       proxyPass = "http://localhost:8989";
+  #     };
+  # };
 
-  # Radarr
-  services.radarr = {
-    enable = true;
-    dataDir = /home/media/.config/radarr;
-    user = "media";
-    group = "media";
-  }
-  services.nginx.virtualHosts."radarr.ratatoskr.uk" = {
-      addSSL = true;
-      enableACME = true;
-      locations."/" = {
-        proxyPass = "http://localhost:7878";
-      };
-  };
+  # # Radarr
+  # services.radarr = {
+  #   enable = true;
+  #   dataDir = /home/media/.config/radarr;
+  #   user = "media";
+  #   group = "media";
+  # }
+  # services.nginx.virtualHosts."radarr.ratatoskr.uk" = {
+  #     addSSL = true;
+  #     enableACME = true;
+  #     locations."/" = {
+  #       proxyPass = "http://localhost:7878";
+  #     };
+  # };
 
   home-manager.users.media = {
     # Fish and compatible programs
     programs.fish = {
       enable = true;
-      interactiveShellInit = 'set fish_greeting';
+      interactiveShellInit = "set fish_greeting";
       shellAliases = {
         cd = "z";
         cat = "bat";
@@ -46,17 +46,12 @@
         find = "fd";
       };
     };
-    programs.starship = {
-      enable = true;
-      enableFishIntegration = true;
-    };
-    programs.zoxide = {
-      enable = true;
-      enableFishIntegration = true;
-    };
-    programs.atuin = {
-      enable = true;
-      enableFishIntegration = true;
-    };
+
+    programs.starship.enable = true; # RUST Shell prompt
+    programs.zoxide.enable = true; # RUST Directory jumper
+    programs.atuin.enable = true; # RUST Shell history manager
+
+    # The state version is required and should stay at the version you originally installed.
+    home.stateVersion = "24.11";
   };
 }
