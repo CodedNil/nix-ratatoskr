@@ -20,7 +20,7 @@
             home-manager.nixosModules.home-manager
             ./hardware-configuration.nix
             ./common.nix
-            ./media.nix
+            ./media/media.nix
             ./dan.nix
           ];
         };

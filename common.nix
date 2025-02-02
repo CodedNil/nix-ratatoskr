@@ -42,6 +42,19 @@
     "flakes"
   ];
 
+  # Enable GPU drivers
+  hardware.graphics = {
+    enable = true;
+    extraPackages = with pkgs; [
+      intel-media-driver # Main Intel media driver for VA-API
+      intel-vaapi-driver # Intel VA-API driver
+      vaapiVdpau # VDPAU to VA-API bridge
+      libvdpau-va-gl # VDPAU OpenGL interoperation
+      intel-compute-runtime # Support for OpenCL capabilities
+      vpl-gpu-rt # Media processing runtime for modern Intel GPUs
+    ];
+  };
+
   # Enable OpenSSH daemon
   services.openssh = {
     enable = true;
@@ -54,7 +67,7 @@
       PermitRootLogin = "prohibit-password"; # "yes", "without-password", "prohibit-password", "forced-commands-only", "no"
     };
   };
-  services.fail2ban.enable = true;
+  # services.fail2ban.enable = true;
 
   # Define users. Don't forget to set a password with ‘passwd’.
   users = {
@@ -87,10 +100,16 @@
         extraGroups = [
           "networkmanager"
           "wheel"
+          "media"
+        ];
+        createHome = true;
+        openssh.authorizedKeys.keys = [
+          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHLyA2WXQ81PQgfxRPZWQcbqKC2MjUuFdYCo9TYgVm4k dan"
         ];
       };
     };
   };
+  users.groups.media = { };
 
   # Enable Nginx
   services.nginx = {
@@ -119,14 +138,13 @@
     tokei # RUST Code statistics tool
 
     # Shell Enhancements
+    jp2a # C Image to ASCII art converter
     eza # RUST Modern 'ls' replacement
     yazi # RUST Terminal file manager
     bat # RUST 'cat' clone with syntax highlighting
     fd # RUST Simple, fast 'find' alternative
   ];
   programs.fish.enable = true;
-  programs.nix-ld.enable = true;
-  programs.nix-ld.libraries = [ ];
 
   # This value determines the NixOS release from which the default settings for stateful data, like file locations and database versions on your system were taken.
   system.stateVersion = "24.11";
