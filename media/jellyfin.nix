@@ -5,14 +5,14 @@ let
   user = "media";
   group = "media";
   homeDir = "/home/${user}";
-  jellyfinConfigDir = "${homeDir}/.config/jellyfin";
-  dataDir = "${jellyfinConfigDir}/data";
-  configDir = "${jellyfinConfigDir}/config";
-  cacheDir = "${jellyfinConfigDir}/cache";
-  logDir = "${jellyfinConfigDir}/log";
+  mainDir = "${homeDir}/.config/jellyfin";
+  dataDir = "${mainDir}/data";
+  configDir = "${mainDir}/config";
+  cacheDir = "${mainDir}/cache";
+  logDir = "${mainDir}/log";
 in
 {
-  environment.systemPackages = [ pkgs.jellyfin ];
+  environment.systemPackages = [ package ];
 
   systemd.services.jellyfin = {
     description = "Jellyfin Media Server";
@@ -27,7 +27,7 @@ in
       User = user;
       Group = group;
       UMask = "0077";
-      WorkingDirectory = jellyfinConfigDir;
+      WorkingDirectory = mainDir;
       ExecStart = "${package}/bin/jellyfin --datadir='${dataDir}' --configdir='${configDir}' --cachedir='${cacheDir}' --logdir='${logDir}'";
       Restart = "on-failure";
       TimeoutSec = 15;
@@ -83,7 +83,7 @@ in
   };
 
   systemd.tmpfiles.rules = [
-    "d ${jellyfinConfigDir} 700 ${user} ${group} -"
+    "d ${mainDir} 700 ${user} ${group} -"
     "d ${dataDir} 700 ${user} ${group} -"
     "d ${configDir} 700 ${user} ${group} -"
     "d ${logDir} 700 ${user} ${group} -"
