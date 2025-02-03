@@ -1,27 +1,31 @@
 { config, pkgs, ... }:
 
 let
-  mediaUser = "media";
-  mediaGroup = "media";
-  homeDir = "/home/${mediaUser}";
+  package = pkgs.jellyfin;
+  user = "media";
+  group = "media";
+  homeDir = "/home/${user}";
   jellyfinConfigDir = "${homeDir}/.config/jellyfin";
   dataDir = "${jellyfinConfigDir}/data";
   configDir = "${jellyfinConfigDir}/config";
   cacheDir = "${jellyfinConfigDir}/cache";
   logDir = "${jellyfinConfigDir}/log";
-  package = pkgs.jellyfin;
 in
 {
+  environment.systemPackages = [ pkgs.jellyfin ];
+
   systemd.services.jellyfin = {
     description = "Jellyfin Media Server";
     after = [ "network-online.target" ];
     wants = [ "network-online.target" ];
     wantedBy = [ "multi-user.target" ];
 
+    # This is mostly follows: https://github.com/jellyfin/jellyfin/blob/master/fedora/jellyfin.service
+    # Upstream also disable some hardenings when running in LXC, we do the same with the isContainer option
     serviceConfig = {
       Type = "simple";
-      User = mediaUser;
-      Group = mediaGroup;
+      User = user;
+      Group = group;
       UMask = "0077";
       WorkingDirectory = jellyfinConfigDir;
       ExecStart = "${package}/bin/jellyfin --datadir='${dataDir}' --configdir='${configDir}' --cachedir='${cacheDir}' --logdir='${logDir}'";
@@ -31,8 +35,11 @@ in
         "0"
         "143"
       ];
+
+      # Security options:
       NoNewPrivileges = true;
       SystemCallArchitectures = "native";
+      # AF_NETLINK needed because Jellyfin monitors the network connection
       RestrictAddressFamilies = [
         "AF_UNIX"
         "AF_INET"
@@ -49,9 +56,11 @@ in
       ProtectKernelTunables = !config.boot.isContainer;
       LockPersonality = true;
       PrivateTmp = !config.boot.isContainer;
+      # needed for hardware acceleration
       PrivateDevices = false;
       PrivateUsers = true;
       RemoveIPC = true;
+
       SystemCallFilter = [
         "~@clock"
         "~@aio"
@@ -74,19 +83,22 @@ in
   };
 
   systemd.tmpfiles.rules = [
-    "d ${jellyfinConfigDir} 700 ${mediaUser} ${mediaGroup} -"
-    "d ${dataDir} 700 ${mediaUser} ${mediaGroup} -"
-    "d ${configDir} 700 ${mediaUser} ${mediaGroup} -"
-    "d ${logDir} 700 ${mediaUser} ${mediaGroup} -"
-    "d ${cacheDir} 700 ${mediaUser} ${mediaGroup} -"
+    "d ${jellyfinConfigDir} 700 ${user} ${group} -"
+    "d ${dataDir} 700 ${user} ${group} -"
+    "d ${configDir} 700 ${user} ${group} -"
+    "d ${logDir} 700 ${user} ${group} -"
+    "d ${cacheDir} 700 ${user} ${group} -"
   ];
 
-  # networking.firewall.allowedTCPPorts = [
-  #   8096
-  #   8920
-  # ];
-  # networking.firewall.allowedUDPPorts = [
-  #   1900
-  #   7359
-  # ];
+  networking.firewall = {
+    # from https://jellyfin.org/docs/general/networking/index.html
+    allowedTCPPorts = [
+      8096
+      8920
+    ];
+    allowedUDPPorts = [
+      1900
+      7359
+    ];
+  };
 }
